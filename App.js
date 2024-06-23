@@ -1,10 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import ImageUploadComponent from './components/ImageUploadComponent';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Text>Business Card Analyzer</Text>
+      <ImageUploadComponent />
       <StatusBar style="auto" />
     </View>
   );
