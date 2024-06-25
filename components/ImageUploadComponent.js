@@ -32,35 +32,61 @@ const ImageUploadComponent = () => {
     }
   };
 
+  const takePicture = async () => {
+    console.log('Take picture button pressed');
+    Alert.alert('Take picture button pressed');
+
+    let result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log('Camera result', result);
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setImageUri(uri);
+      setMessage('');
+      console.log('Image URI set:', uri);
+      Alert.alert('Image taken', uri);
+    } else {
+      console.log('Image capture cancelled');
+      Alert.alert('Image capture cancelled');
+    }
+  };
+
+ 
   const uploadImage = async () => {
     console.log('Upload button pressed');
     Alert.alert('Upload button pressed');
-
+  
     if (!imageUri) {
       Alert.alert('No image selected', 'Please select an image to upload');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('file', {
       uri: imageUri,
       name: 'photo.jpg',
       type: 'image/jpeg',
     });
-
+  
     console.log('Form data prepared', formData);
-
+  
     try {
-      const response = await fetch('https://8j01c6s5h4.execute-api.us-east-2.amazonaws.com', {
+      const response = await fetch('https://9imktv4xuc.execute-api.us-east-2.amazonaws.com/test', {
         method: 'POST',
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        mode: 'cors' // Ensure CORS mode is set
       });
-
+  
       console.log('Fetch response', response);
-
+  
       if (response.ok) {
         const responseJson = await response.json();
         setMessage('Upload Success: ' + JSON.stringify(responseJson));
@@ -74,11 +100,15 @@ const ImageUploadComponent = () => {
       Alert.alert('Upload Failed', error.message);
     }
   };
+  
 
   return (
     <View style={styles.container}>
       <Pressable style={styles.button} onPress={pickImage}>
         <Text style={styles.buttonText}>Pick an image from gallery</Text>
+      </Pressable>
+      <Pressable style={styles.button} onPress={takePicture}>
+        <Text style={styles.buttonText}>Take a picture</Text>
       </Pressable>
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
       <Pressable style={styles.button} onPress={uploadImage}>
